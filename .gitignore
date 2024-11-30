@@ -1,0 +1,38 @@
+# Compiled binaries
+matrix_transpose
+matrix_transpose_implicit
+matrix_transpose_openmp
+
+# Object files and other build artifacts
+*.o
+*.out
+
+# Temporary files
+*.tmp
+*.swp
+*.log
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Data files and outputs
+data/
+
+# Visualization outputs
+visualizations/plots/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor specific files
+.vscode/
+.idea/
+*.iml
+
+# Backup files
+*~
+*.bak
+*.old
