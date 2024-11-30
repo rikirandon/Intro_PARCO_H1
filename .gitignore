@@ -1,5 +1,5 @@
 # Compiled binaries
-matrix_transpose
+matrix_transpose_sequential
 matrix_transpose_implicit
 matrix_transpose_openmp
 
