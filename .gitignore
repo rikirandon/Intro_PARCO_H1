@@ -7,6 +7,15 @@ matrix_transpose_imp_fast
 
 matrix_transpose_openmp
 
+# Ignore all
+*
+
+# Unignore all with extensions
+!*.*
+
+# Unignore all dirs
+!*/
+
 # Object files and other build artifacts
 *.o
 *.out
