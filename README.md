@@ -25,6 +25,7 @@ This project implements matrix transposition with three different approaches: se
 ## How to Run
 **Run the entire pipline:** After compilation, run the bash script to execute all programs and perform tests:
 ```bash
+cd Intro_PARCO_H1
 bash ./run_all.sh
 ```
 
