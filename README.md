@@ -28,6 +28,7 @@ This project implements matrix transposition with three different approaches: se
 cd Intro_PARCO_H1
 bash ./scripts/run_all.sh
 ```
+(this could take up to 10m)
 
 ## Data Analysis and Visualization
 After running the program, navigate to the main directory and use the Python scripts for data analysis and visualization.
