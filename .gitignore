@@ -1,8 +1,8 @@
 # Compiled binaries
 matrix_transpose_sequential
-matrix_transpose_imp_01
-matrix_transpose_imp_02
-matrix_transpose_imp_03
+matrix_transpose_imp_o1
+matrix_transpose_imp_o2
+matrix_transpose_imp_o3
 matrix_transpose_imp_fast
 
 matrix_transpose_openmp
