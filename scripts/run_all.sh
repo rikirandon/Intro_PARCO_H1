@@ -5,6 +5,11 @@ cd src
 make
 cd ..
 
+# Check if the data directory exists, if not, create it
+if [ ! -d "data" ]; then
+  mkdir data
+fi
+
 # Create a data directory
 rm -f data/results_seq.csv
 rm -f data/results_imp_o1.csv
