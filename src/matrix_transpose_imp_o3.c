@@ -1,47 +1,54 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
-#include <omp.h>
 #include "utils/utils.h"  
 
-#define OUTPUT_FILE "data/results_omp.csv"  
+#define OUTPUT_FILE "data/results_imp_o3.csv"  
 #define BLOCK_SIZE 32  
 
 // Define a volatile variable to prevent the optimization of unused functions
 volatile int is_symmetric;
 
-// Function to check if a matrix is symmetric (optimized with blocking, prefetching, and SIMD)
-int checkSymOMP(double** matrix, int n) {
-    int symmetric = 1;  // Assume symmetric initially
 
-    // Parallelize the outer loop over blocks with OpenMP
-    #pragma omp parallel for collapse(2) reduction(&:symmetric)
+// Function to check if a matrix is symmetric (optimized with blocking, prefetching, and SIMD)
+int checkSymIMP(double** matrix, int n) {
+    // Loop through the matrix blocks for cache optimization
     for (int i = 0; i < n; i += BLOCK_SIZE) {
         for (int j = i + 1; j < n; j += BLOCK_SIZE) {
+
             // Process each block of the matrix
             for (int ii = i; ii < i + BLOCK_SIZE && ii < n; ii++) {
                 for (int jj = j; jj < j + BLOCK_SIZE && jj < n; jj++) {
+
+                    // Prefetch the elements we're going to compare to L1 cache
+                    if (ii + 1 < n) {
+                        #pragma prefetch &matrix[ii + 1][jj] T0  // Prefetch to L1 cache
+                    }
                     if (matrix[ii][jj] != matrix[jj][ii]) {
-                        symmetric = 0;  // Matrix is not symmetric
+                        return 0;  // Matrix is not symmetric
                     }
                 }
             }
         }
     }
 
-    return symmetric;  // Return the result of symmetry check
+    return 1;  // Matrix is symmetric
 }
 
 // Function to perform matrix transposition with blocking, prefetching, and SIMD
-void matTransposeOMP(double** matrix, double** result, int n) {
-    // Parallelize the loop over blocks with OpenMP
-    #pragma omp parallel for collapse(2)
+void matTransposeIMP(double** matrix, double** result, int n) {
+    // Loop through the blocks of the matrix for cache optimization
     for (int i = 0; i < n; i += BLOCK_SIZE) {
         for (int j = 0; j < n; j += BLOCK_SIZE) {
+
             // Process each block
             for (int ii = i; ii < i + BLOCK_SIZE && ii < n; ii++) {
                 for (int jj = j; jj < j + BLOCK_SIZE && jj < n; jj++) {
+
                     // Prefetch next row into L1 cache before accessing it
+                    if (ii + 1 < n) {
+                        #pragma prefetch &matrix[ii + 1][jj] T0
+                    }
                     result[jj][ii] = matrix[ii][jj];
                 }
             }
@@ -83,13 +90,13 @@ int main(int argc, char *argv[]) {
 
         // Time the symmetry check
         gettimeofday(&start, NULL);
-        is_symmetric = checkSymOMP(matrix, n);  
+        is_symmetric = checkSymIMP(matrix, n);  
         gettimeofday(&end, NULL);
         total_check_time += calculateElapsedTime(start, end);  
 
         // Time the matrix transposition
         gettimeofday(&start, NULL);
-        matTransposeOMP(matrix, result, n);  
+        matTransposeIMP(matrix, result, n);  
         gettimeofday(&end, NULL);
         total_transpose_time += calculateElapsedTime(start, end);
     }
@@ -106,13 +113,9 @@ int main(int argc, char *argv[]) {
         freeMatrix(result, n);
         return 1;
     }
-    int num_threads;
-    #pragma omp parallel
-    {
-        num_threads = omp_get_num_threads();
-    }
+
     // Write the results to the CSV file
-    fprintf(file, "%d, %d,  %f, %f\n", n, num_threads, mean_check_time, mean_transpose_time);
+    fprintf(file, "%d, %f, %f\n", n, mean_check_time, mean_transpose_time);
 
     // Clean up dynamically allocated memory
     freeMatrix(matrix, n);

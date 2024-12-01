@@ -1,6 +1,10 @@
 # Compiled binaries
 matrix_transpose_sequential
-matrix_transpose_implicit
+matrix_transpose_imp_01
+matrix_transpose_imp_02
+matrix_transpose_imp_03
+matrix_transpose_imp_fast
+
 matrix_transpose_openmp
 
 # Object files and other build artifacts

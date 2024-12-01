@@ -3,7 +3,7 @@
 #include <sys/time.h>
 #include "utils/utils.h"  
 
-#define OUTPUT_FILE "data/results_imp.csv"  
+#define OUTPUT_FILE "data/results_imp_o2.csv"  
 #define BLOCK_SIZE 32  
 
 // Define a volatile variable to prevent the optimization of unused functions
@@ -76,18 +76,14 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    FILE *file = fopen(OUTPUT_FILE, "a");
-    if (file == NULL) {
-        printf("Could not open file %s for writing.\n", OUTPUT_FILE);
-        freeMatrix(matrix, n);
-        freeMatrix(result, n);
-        return 1;
-    }
-
     // Declare time variables to store the start and end times
     struct timeval start, end;
-    double check_time, transpose_time;
 
+    // Variables to accumulate total times for symmetry check and transpose
+    double total_check_time = 0.0;
+    double total_transpose_time = 0.0;
+
+    // Run the matrix operations X times and calculate the mean times
     for (int i = 0; i < X; i++) {
         // Initialize matrix with random values and ensure it's symmetric
         initSymmetricMatrix(matrix, n);
@@ -96,18 +92,30 @@ int main(int argc, char *argv[]) {
         gettimeofday(&start, NULL);
         is_symmetric = checkSymIMP(matrix, n);  
         gettimeofday(&end, NULL);
-        check_time = calculateElapsedTime(start, end);  
+        total_check_time += calculateElapsedTime(start, end);  
 
         // Time the matrix transposition
         gettimeofday(&start, NULL);
         matTransposeIMP(matrix, result, n);  
         gettimeofday(&end, NULL);
-        transpose_time = calculateElapsedTime(start, end);
-
-        // Append results to the CSV file
-        fprintf(file, "%d, %f, %f\n", n, check_time, transpose_time);
-
+        total_transpose_time += calculateElapsedTime(start, end);
     }
+
+    // Calculate the mean times for symmetry check and transposition
+    double mean_check_time = total_check_time / X;
+    double mean_transpose_time = total_transpose_time / X;
+
+    // Open the CSV file to store the results
+    FILE *file = fopen(OUTPUT_FILE, "a");
+    if (file == NULL) {
+        printf("Could not open file %s for writing.\n", OUTPUT_FILE);
+        freeMatrix(matrix, n);
+        freeMatrix(result, n);
+        return 1;
+    }
+
+    // Write the results to the CSV file
+    fprintf(file, "%d, %f, %f\n", n, mean_check_time, mean_transpose_time);
 
     // Clean up dynamically allocated memory
     freeMatrix(matrix, n);
