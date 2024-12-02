@@ -34,10 +34,9 @@ bash ./scripts/run_all.sh
 After running the program, navigate to the main directory and use the Python scripts for data analysis and visualization.
 To analyze the performance, run the following Python command:
 ```bash
-python3 analysis.py
+python3 analysis/speedup.py
 ```
 This will generate plots and graphs based on the experimental results.
-Do the same for all the analysis file that you want.
-Note: Ensure to run Python scripts from the main directory, not from the analysis directory.
-
+Do the same for the other files in analyisis folder.
+Results in analysis/images.
 
