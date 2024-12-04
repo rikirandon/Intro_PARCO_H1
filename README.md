@@ -13,7 +13,7 @@ This project implements matrix transposition with three different approaches: se
 - **`src/`**: Contains the C source code for the different matrix transposition implementations.
 - **`scripts/`**: Contains scripts to automate the compilation and testing processes.
 - **`data/`**: Stores results from the experiments for analysis.
-- **`visualizations/`**: Python scripts to analyze and visualize the experimental data.
+- **`analysis/`**: Python scripts to analyze and visualize the experimental data.
 
 ## Installation Instructions
 1. Clone the repository:
